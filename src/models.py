@@ -81,7 +81,7 @@ class Vehicle(db.Model):
     starship_class = db.Column(db.String(100), unique=True, nullable=False)
 
     favorites = db.relationship("Favorite", backref="vehicle")
-    character_id = db.Column(db.Integer, db.ForeignKey("character.id"), nullable=True)
+    character_id = db.Column(db.Integer, db.ForeignKey("character.id"), nullable=False)
 
     def __repr__(self):
 
