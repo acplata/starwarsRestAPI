@@ -28,8 +28,9 @@ class Character(db.Model):
     gender = db.Column(db.String(40), unique=False, nullable=False)
     birth_year = db.Column(db.Integer, unique=False, nullable=False)
 
-    planet_id = db.Column(db.Integer, db.ForeignKey("planet.id"), nullable=False)
+    planet_id = db.Column(db.Integer, db.ForeignKey("planet.id"), nullable=True)
     vehicles = db.relationship("Vehicle", backref="favorite")
+    favorites = db.relationship("Favorite", backref="character")
 
     def __repr__(self):
 
@@ -80,7 +81,7 @@ class Vehicle(db.Model):
     starship_class = db.Column(db.String(100), unique=True, nullable=False)
 
     favorites = db.relationship("Favorite", backref="vehicle")
-    character_id = db.Column(db.Integer, db.ForeignKey("character.id"), nullable=False)
+    character_id = db.Column(db.Integer, db.ForeignKey("character.id"), nullable=True)
 
     def __repr__(self):
 

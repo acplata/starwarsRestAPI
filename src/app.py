@@ -62,31 +62,25 @@ def get_characters_by_id(id):
     character = Character.query.get(id)
     return jsonify(character.serialize())
 
-@app.route('favorite/character/<int:id>', methods=['POST'])
-def add_character_to_favorite():
+@app.route('/favorite/character/<int:id>', methods=['POST'])
+def add_character_to_favorite(id):
     data = request.get_json()  
-    data_name = data.get("name", None)
-    data_height = data.get("height", None)
-    data_hair_color = data.get("hair_color", None)
-    data_eye_color = data.get("eye_color", None)
-    data_gender = data.get("gender", None)
-    data_birth_year = data.get("birth_year", None)
-   
-    new_character = Character(name=data_name, gender=data_gender,
-                              height=data_height, hair_color=data_hair_color, eye_color=data_eye_color, birth_year=data_birth_year)
+    data_user_id = data.get("user_id", None)
+
+    new_favorite = Favorite(character_id=id, user_id=data_user_id)
 
     try:
-        db.session.add(new_character)  
+        db.session.add(new_favorite)  
         db.session.commit()
-        return jsonify(new_character.serialize()), 201
+        return jsonify(new_favorite.serialize()), 201
 
     except Exception as error:
         db.session.rollback()
         return error, 500
     
-@app.route('favorite/character/<int:id>', methods=['DELETE'])
+@app.route('/favorite/character/<int:id>', methods=['DELETE'])
 def delete_character_by_id(id):
-    character_to_delete = Character.query.get(id)
+    character_to_delete = Favorite.query.filter_by(character_id=id)
     if not character_to_delete:
         return jsonify({'error': 'Character not found'}), 404
 
@@ -109,16 +103,35 @@ def get_planets_by_id(id):
     planet = planet.query.get(id)
     return jsonify(planet.serialize())
 
-@app.route('/planet', methods=['POST'])
-def create_planet():
+@app.route('/favorite/planet/<int:id>', methods=['POST'])
+def add_planet_to_favorite(id):
     data = request.get_json()  
-    data_name = data.get("name", None)
-    data_population = data.get("population", None)
-    data_climate = data.get("climate", None)
-    data_terrain = data.get("terrain", None)
-   
-    new_planet = Planet(name=data_name, population=data_population,
-                              climate=data_climate, terrain=data_terrain)
+    data_user_id = data.get("user_id", None)
+
+    new_favorite = Favorite(planet_id=id, user_id=data_user_id)
+
+    try:
+        db.session.add(new_favorite)  
+        db.session.commit()
+        return jsonify(new_favorite.serialize()), 201
+
+    except Exception as error:
+        db.session.rollback()
+        return error, 500
+    
+@app.route('/favorite/planet/<int:id>', methods=['DELETE'])
+def delete_planet_by_id(id):
+    planet_to_delete = Favorite.query.filter_by(planet_id=id)
+    if not planet_to_delete:
+        return jsonify({'error': 'planet not found'}), 404
+
+    try:
+        db.session.delete(planet_to_delete)
+        db.session.commit()
+        return jsonify("planet deleted successfully"), 200
+    except Exception as error:
+        db.session.rollback()
+        return error
     
 @app.route('/vehicles', methods=['GET'])
 def get_vehicles():
@@ -131,27 +144,35 @@ def get_vehicles_by_id(id):
     vehicle = vehicle.query.get(id)
     return jsonify(vehicle.serialize())
 
-@app.route('/vehicle', methods=['POST'])
-def create_vehicle():
+@app.route('/favorite/vehicle/<int:id>', methods=['POST'])
+def add_vehicle_to_favorite(id):
     data = request.get_json()  
-    data_name = data.get("name", None)
-    data_passengers = data.get("population", None)
-    data_model = data.get("model", None)
-    data_manufacturer = data.get("manufacturer", None)
-    data_starship_class = data.get("starship_class", None)
-   
-    new_vehicle = Vehicle(name=data_name, model=data_model, passengers=data_passengers,
-                              manufacturer=data_manufacturer, starship_class=data_starship_class)
+    data_user_id = data.get("user_id", None)
+
+    new_favorite = Favorite(vehicle_id=id, user_id=data_user_id)
 
     try:
-        db.session.add(new_vehicle)  
+        db.session.add(new_favorite)  
         db.session.commit()
-        return jsonify(new_vehicle.serialize()), 201
+        return jsonify(new_favorite.serialize()), 201
 
     except Exception as error:
         db.session.rollback()
         return error, 500
     
+@app.route('/favorite/vehicle/<int:id>', methods=['DELETE'])
+def delete_vehicle_by_id(id):
+    vehicle_to_delete = Favorite.query.filter_by(vehicle_id=id)
+    if not vehicle_to_delete:
+        return jsonify({'error': 'vehicle not found'}), 404
+
+    try:
+        db.session.delete(vehicle_to_delete)
+        db.session.commit()
+        return jsonify("vehicle deleted successfully"), 200
+    except Exception as error:
+        db.session.rollback()
+        return error
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
